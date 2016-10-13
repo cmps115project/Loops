@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 
-<<<<<<< HEAD
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
@@ -12,7 +11,6 @@ android {
             storePassword keystoreProperties['storePassword']
             keyAlias keystoreProperties['keyAlias']
             keyPassword keystoreProperties['keyPassword']
->>>>>>> 1bc1bfd4b16106998ee982f58b6006f93e85ae26
         }
     }
     compileSdkVersion 22
