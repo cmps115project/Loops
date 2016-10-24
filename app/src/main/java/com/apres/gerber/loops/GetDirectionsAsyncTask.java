@@ -30,12 +30,12 @@ public class GetDirectionsAsyncTask extends AsyncTask<Map<String, String>, Objec
 
     public static final String DIRECTIONS_MODE = "directions_mode";
 
-    private MapsActivity activity;
+    private ConfirmActivity activity;
     private Exception exception;
     private ProgressDialog progressDialog;
     public static int distance;
 
-    public GetDirectionsAsyncTask(MapsActivity activity)
+    public GetDirectionsAsyncTask(ConfirmActivity activity)
     {
         super();
         this.activity = activity;
@@ -54,7 +54,7 @@ public class GetDirectionsAsyncTask extends AsyncTask<Map<String, String>, Objec
         progressDialog.dismiss();
         if (exception == null)
         {
-            MapsActivity.meters=distance;
+            ConfirmActivity.meters=distance;
             activity.handleGetDirectionsResult(result);
         }
         else
