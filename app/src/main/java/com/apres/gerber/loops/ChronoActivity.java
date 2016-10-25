@@ -34,9 +34,11 @@ public class ChronoActivity extends AppCompatActivity implements View.OnClickLis
     Button startButton;
     Button stopButton;
     Button resetButton;
-    Chronometer mchrono = new Chronometer(this);
+    Chronometer mchrono;
+    boolean startPress=false;
+    boolean stopPress=false;
+    long time =0;
     private TextView mTextView;
-    long milli = SystemClock.elapsedRealtime()-mchrono.getBase();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,32 +73,34 @@ public class ChronoActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.start:
-                mchrono.setBase(SystemClock.elapsedRealtime());
-                mchrono.start();
+                if(!startPress) {
+                    mchrono.setBase(SystemClock.elapsedRealtime() + time);
+                    mchrono.start();
+                    startPress=true;
+                    stopPress=false;
+                }
                 break;
             case R.id.stop:
+                if (!stopPress) {
+                    time = mchrono.getBase() - SystemClock.elapsedRealtime();
+                    mchrono.stop();
+                    startPress = false;
+                    stopPress = true;
+                }
+                break;
+            case R.id.reset:
                 mchrono.setBase(SystemClock.elapsedRealtime());
                 mchrono.stop();
                 break;
-            case R.id.reset:
-                mchrono.setBase(0);
         }
     }
 
-    public void setMapSettings(){
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        ConfirmActivity.mGoogleMap = mapFragment.getMap();
-        ConfirmActivity.mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+    public void setMapSettings() {
 
-        MapsActivity.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        MapsActivity.mLocationListener = new ChronoActivity.MyLocationListener();
-        // Define the criteria how to select the location in provider -> use
-        // default
-        Criteria criteria = new Criteria();
-        MapsActivity.provider = MapsActivity.locationManager.getBestProvider(criteria, false);
-        MapsActivity.locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, MapsActivity.mLocationListener);
-        MapsActivity.location = MapsActivity.locationManager.getLastKnownLocation(MapsActivity.provider);
+        MapsActivity.mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        ConfirmActivity.mGoogleMap = MapsActivity.mapFragment.getMap();
+        ConfirmActivity.mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
 
         try {
             LatLng camera = new LatLng(MapsActivity.location.getLatitude(), MapsActivity.location.getLongitude());

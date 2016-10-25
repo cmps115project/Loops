@@ -2,7 +2,6 @@ package com.apres.gerber.loops;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -30,12 +29,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MapsActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -49,6 +42,8 @@ public class MapsActivity extends AppCompatActivity implements View.OnClickListe
     public static Location location;
     public static LocationListener mLocationListener;
     public static CameraPosition mCameraPosition;
+    public static SupportMapFragment mapFragment;
+
     public static Marker mMarker;
     public static MenuItem mMenuItem;
     private TextView mTextview;
@@ -121,7 +116,7 @@ public class MapsActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void setMapSettings(){
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         ConfirmActivity.mGoogleMap = mapFragment.getMap();
         ConfirmActivity.mGoogleMap.getUiSettings().setZoomControlsEnabled(true);

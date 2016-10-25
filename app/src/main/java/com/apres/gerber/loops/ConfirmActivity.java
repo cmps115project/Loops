@@ -299,19 +299,10 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     public void setMapSettings(){
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        MapsActivity.mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        ConfirmActivity.mGoogleMap = mapFragment.getMap();
+        ConfirmActivity.mGoogleMap = MapsActivity.mapFragment.getMap();
         ConfirmActivity.mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
-
-        MapsActivity.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        MapsActivity.mLocationListener = new ConfirmActivity.MyLocationListener();
-        // Define the criteria how to select the location in provider -> use
-        // default
-        Criteria criteria = new Criteria();
-        MapsActivity.provider = MapsActivity.locationManager.getBestProvider(criteria, false);
-        MapsActivity.locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, MapsActivity.mLocationListener);
-        MapsActivity.location = MapsActivity.locationManager.getLastKnownLocation(MapsActivity.provider);
 
         try {
             LatLng camera = new LatLng(MapsActivity.location.getLatitude(), MapsActivity.location.getLongitude());
@@ -325,6 +316,7 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         } catch (NullPointerException e) {
             Toast.makeText(this, "No Location Found", Toast.LENGTH_LONG).show();
         }
+
     }
 
     public final class MyLocationListener implements LocationListener {
