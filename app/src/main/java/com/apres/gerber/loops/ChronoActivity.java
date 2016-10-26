@@ -2,6 +2,7 @@ package com.apres.gerber.loops;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -30,6 +31,11 @@ import static com.apres.gerber.loops.R.layout.chrono;
  */
 
 public class ChronoActivity extends AppCompatActivity implements View.OnClickListener{
+
+    LocationManager locationManager;
+    LocationListener mLocationListener;
+    Location location;
+    String provider;
 
     Button startButton;
     Button stopButton;
@@ -62,6 +68,10 @@ public class ChronoActivity extends AppCompatActivity implements View.OnClickLis
         resetButton.setOnClickListener(this);
         mchrono = (Chronometer) findViewById(R.id.chronometer);
         mTextView = (TextView) findViewById(R.id.distance2);
+
+        locationManager = MapsActivity.locationManager;
+        provider = MapsActivity.provider;
+        location = MapsActivity.location;
 
         mTextView.setText("Distance: " + ConfirmActivity.miles + " mi");
 
@@ -102,6 +112,11 @@ public class ChronoActivity extends AppCompatActivity implements View.OnClickLis
         ConfirmActivity.mGoogleMap = MapsActivity.mapFragment.getMap();
         ConfirmActivity.mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
 
+        mLocationListener = new ChronoActivity.MyLocationListener();
+
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
+        location = locationManager.getLastKnownLocation(provider);
+
         try {
             LatLng camera = new LatLng(MapsActivity.location.getLatitude(), MapsActivity.location.getLongitude());
             MapsActivity.mCameraPosition = new CameraPosition.Builder().target(camera)
@@ -115,6 +130,29 @@ public class ChronoActivity extends AppCompatActivity implements View.OnClickLis
             Toast.makeText(this, "No Location Found", Toast.LENGTH_LONG).show();
         }
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Toast.makeText(this, "Home Button Pressed", Toast.LENGTH_LONG);
+                Intent myIntent = new Intent(ChronoActivity.this, ConfirmActivity.class);
+                startActivityForResult(myIntent,0);
+                return true;
+            case R.id.option1:
+                //TODO add what to do
+                return true;
+
+            case R.id.option2:
+                //TODO add what to do
+                return true;
+
+            case R.id.option3:
+                //TODO add what to do
+                return true;
+            default:
+                return false;
+        }
+    }
 
     public final class MyLocationListener implements LocationListener {
 
@@ -126,7 +164,7 @@ public class ChronoActivity extends AppCompatActivity implements View.OnClickLis
                 MapsActivity.addMarker(curLocation, 10);
             }
             else
-                MapsActivity. addMarker(curLocation, 10);
+                MapsActivity.addMarker(curLocation, 10);
         }
 
         @Override

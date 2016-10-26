@@ -57,7 +57,6 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.confirm);
 
         mMenuItem = (MenuItem) findViewById(android.R.id.home);
-
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
@@ -65,6 +64,8 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
 
         super.onOptionsItemSelected(mMenuItem);
 
+        //Intent prevIntent = new Intent(.getContext(),MapsActivity.class);
+        //startActivityForResult(myIntent,0);
 
         mSubmit = (Button) findViewById(R.id.Submit);
         mSubmit.setOnClickListener(this);
@@ -124,6 +125,29 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
                 break;
         }
 
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Toast.makeText(this, "Home Button Pressed", Toast.LENGTH_LONG);
+                Intent myIntent = new Intent(ConfirmActivity.this, MapsActivity.class);
+                startActivityForResult(myIntent,0);
+                return true;
+            case R.id.option1:
+                //TODO add what to do
+                return true;
+
+            case R.id.option2:
+                //TODO add what to do
+                return true;
+
+            case R.id.option3:
+                //TODO add what to do
+                return true;
+            default:
+                return false;
+        }
     }
 
     public void findDirections(ArrayList <LatLng> circle, String mode)
@@ -317,35 +341,6 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
             Toast.makeText(this, "No Location Found", Toast.LENGTH_LONG).show();
         }
 
-    }
-
-    public final class MyLocationListener implements LocationListener {
-
-        @Override
-        public void onLocationChanged(Location location) {
-            LatLng curLocation = new LatLng(location.getLatitude(),location.getLongitude());
-            if (MapsActivity.mMarker!=null) {
-                MapsActivity.mMarker.remove();
-                MapsActivity.addMarker(curLocation, 10);
-            }
-            else
-                MapsActivity. addMarker(curLocation, 10);
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-            // called when the GPS provider is turned off (user turning off the GPS on the phone)
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-            // called when the GPS provider is turned on (user turning on the GPS on the phone)
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            // called when the status of the GPS provider changes
-        }
     }
 
 }

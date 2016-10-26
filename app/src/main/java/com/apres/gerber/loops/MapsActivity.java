@@ -46,7 +46,6 @@ public class MapsActivity extends AppCompatActivity implements View.OnClickListe
 
     public static Marker mMarker;
     public static MenuItem mMenuItem;
-    private TextView mTextview;
 
     public static final float radOfEarth = 3950;
     public static double lat;
@@ -77,7 +76,6 @@ public class MapsActivity extends AppCompatActivity implements View.OnClickListe
         mfindLoops = (LinearLayout) findViewById(R.id.findLoops);
         mEditDistance = (EditText) findViewById(R.id.edt_text);
         mButton = (Button) findViewById(R.id.loop_button);
-        mTextview = (TextView) findViewById(R.id.distance);
 
         setMapSettings();
 
@@ -163,28 +161,6 @@ public class MapsActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                Toast.makeText(this, "Home Button Pressed", Toast.LENGTH_LONG);
-                return true;
-            case R.id.option1:
-                //TODO add what to do
-                return true;
-
-            case R.id.option2:
-                //TODO add what to do
-                return true;
-
-            case R.id.option3:
-                //TODO add what to do
-                return true;
-            default:
-                return false;
-        }
-    }
-
     private boolean isGooglePlayServicesAvailable() {
         int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
         if (ConnectionResult.SUCCESS == status) {
@@ -201,6 +177,28 @@ public class MapsActivity extends AppCompatActivity implements View.OnClickListe
                 .title("This is point" + order)
                 .snippet("Lat: " + point.latitude + " Lng: " + point.longitude)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher)));
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Toast.makeText(this, "Home Button Pressed", Toast.LENGTH_LONG);
+                Log.d("CHECK","Home button is pressed");
+                return true;
+            case R.id.option1:
+                //TODO add what to do
+                return true;
+
+            case R.id.option2:
+                //TODO add what to do
+                return true;
+
+            case R.id.option3:
+                //TODO add what to do
+                return true;
+            default:
+                return false;
+        }
     }
 
     public final class MyLocationListener implements LocationListener {
