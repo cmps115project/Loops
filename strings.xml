@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Loops</string>
+    <string name="title_activity_maps">Loops</string>
+
+    <string name="share_generic">Share</string>
+
+    <string name="share_text_description">Enter text:</string>
+    <string name="share_text_hint">Type here</string>
+    <string name="title_share_text">Share Text</string>
+
+    <string name="share_pic_description">Select a picture to share:</string>
+    <string name="title_share_pic">Share Picture</string>
+    <string name="share_pic_camera_button_text">Camera</string>
+    <string name="share_pic_thumbnail_content_description">Captured image to share</string>
+
+</resources>
