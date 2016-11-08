@@ -2,4 +2,8 @@
 <resources>
     <string name="app_name">Loops</string>
     <string name="title_activity_maps">Loops</string>
+    <string-array name = "Length">
+        <item>Miles</item>
+        <item>Kilometers</item>
+    </string-array>
 </resources>
