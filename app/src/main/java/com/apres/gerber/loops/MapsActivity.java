@@ -12,9 +12,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +39,8 @@ public class MapsActivity extends AppCompatActivity implements View.OnClickListe
     private LinearLayout mfindLoops;
     public static EditText mEditDistance;
     private Button mButton;
+    private Spinner lengthSetter;
+    public static boolean kiloIsLength;
 
     public static String provider;
     public static LocationManager locationManager;
@@ -81,9 +86,38 @@ public class MapsActivity extends AppCompatActivity implements View.OnClickListe
 
         mEditDistance.setOnClickListener(this);
         mButton.setOnClickListener(this);
+        lengthSetter = (Spinner) findViewById(R.id.lengthSetter);
 
 
 
+        //lengthSetter.setOnItemSelectedListener(this);
+
+
+        final ArrayAdapter<CharSequence> lengthAdapter = ArrayAdapter.createFromResource(this,
+                R.array.Length, android.R.layout.simple_spinner_dropdown_item);
+
+        lengthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        lengthSetter.setAdapter(lengthAdapter);
+
+        lengthSetter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position == 1) {
+                    kiloIsLength = true;
+                    Toast.makeText(MapsActivity.this, parent.getItemAtPosition(position) + " is selected.",
+                            Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    kiloIsLength = false;
+                    Toast.makeText(MapsActivity.this, parent.getItemAtPosition(position) + " is selected.",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
+            }
+        });
     }
 
     public void onClick(View v) {
@@ -136,7 +170,7 @@ public class MapsActivity extends AppCompatActivity implements View.OnClickListe
                     .tilt(25)
                     .build();
             ConfirmActivity.mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(mCameraPosition));
-            addMarker(camera, 1);
+            Marker initialPos = addMarker(camera, 1);
         } catch (NullPointerException e) {
             Toast.makeText(this, "No Location Found", Toast.LENGTH_LONG).show();
         }
@@ -171,12 +205,14 @@ public class MapsActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public static void addMarker(LatLng point, int order){
+    public static Marker addMarker(LatLng point, int order){
         mMarker = ConfirmActivity.mGoogleMap.addMarker(new MarkerOptions()
                 .position(point)
-                .title("This is point" + order)
+                .title("This is point " + order)
                 .snippet("Lat: " + point.latitude + " Lng: " + point.longitude)
+                .draggable(true)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher)));
+        return mMarker;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -206,12 +242,13 @@ public class MapsActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onLocationChanged(Location location) {
             LatLng curLocation = new LatLng(location.getLatitude(),location.getLongitude());
+            Marker m;
             if (mMarker!=null) {
                 mMarker.remove();
-                addMarker(curLocation, 10);
+                m = addMarker(curLocation, 10);
             }
             else
-                addMarker(curLocation, 10);
+                m = addMarker(curLocation, 10);
         }
 
         @Override

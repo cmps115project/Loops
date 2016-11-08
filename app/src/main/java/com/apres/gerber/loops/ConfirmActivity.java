@@ -9,13 +9,14 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.*;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,8 +25,11 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.text.DecimalFormat;
+import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,13 +42,21 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
     private Button mSubmit;
     private Button mNext;
     private Button mPrev;
-    public static TextView mDistance;
-    public static TextView mAltitude;
+
+    private Marker m1;
+    private Marker m2;
+    private Marker m3;
+    private Marker m4;
+    private Marker m5;
+    private Marker m6;
+    private Marker m7;
+    private Marker m8;
+
+    public static TextView mTextview;
     private MenuItem mMenuItem;
     public static double miles;
+    public static double kilometers;
     public static int meters;
-    public static double Altitude;
-    static DecimalFormat df = new DecimalFormat("00.000");
     public int clicks = 0;
 
 
@@ -70,19 +82,69 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
 
         super.onOptionsItemSelected(mMenuItem);
 
+        //Intent prevIntent = new Intent(.getContext(),MapsActivity.class);
+        //startActivityForResult(myIntent,0);
+
         mSubmit = (Button) findViewById(R.id.Submit);
         mSubmit.setOnClickListener(this);
         mNext = (Button) findViewById(R.id.next);
         mNext.setOnClickListener(this);
         mPrev = (Button) findViewById(R.id.prev);
         mPrev.setOnClickListener(this);
-        mDistance = (TextView) findViewById(R.id.distance);
-        mAltitude = (TextView) findViewById(R.id.altitude);
+        mTextview = (TextView) findViewById(R.id.distance);
+
+//        LatLng num = new LatLng(36.11, -122.01);
+//        Marker m112 = new Marker({
+//                .position(num)
+//                .title("Testin")
+//                .draggable(true)
+//        });
+
+        mGoogleMap.addMarker(m112);
+
+        mGoogleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+                Toast.makeText(ConfirmActivity.this, marker.getId() + " is selected1.",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+                Toast.makeText(ConfirmActivity.this, marker.getId() + " is selected2.",
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                Toast.makeText(ConfirmActivity.this, marker.getId() + " is selected3.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
 
         setMapSettings();
         calcLoop();
 
     }
+//
+//    @Override
+//    public void onMarkerDragStart(Marker marker) {
+//        LatLng position=marker.getPosition();
+//
+//    }
+//
+//    @Override
+//    public void onMarkerDrag(Marker marker) {
+//        LatLng position=marker.getPosition();
+//
+//    }
+//
+//    @Override
+//    public void onMarkerDragEnd(Marker marker) {
+//        LatLng position=marker.getPosition();
+//
+//    }
+
 
     public void onClick(View v) {
         switch (v.getId()) {
@@ -130,14 +192,6 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         }
 
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -147,7 +201,7 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
                 startActivityForResult(myIntent,0);
                 return true;
             case R.id.option1:
-
+                //TODO add what to do
                 return true;
 
             case R.id.option2:
@@ -189,26 +243,42 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         asyncTask.execute(map);
     }
 
-    public void makeLoop (ArrayList<LatLng> circle){
+    public void makeLoop (ArrayList<LatLng> circle) {
         findDirections(circle, GMapV2Direction.MODE_WALKING);
-        MapsActivity.addMarker(circle.get(0), 1);
-        MapsActivity.addMarker(circle.get(1), 2);
-        MapsActivity.addMarker(circle.get(2), 3);
-        MapsActivity.addMarker(circle.get(3), 4);
-        MapsActivity.addMarker(circle.get(4), 5);
-        MapsActivity.addMarker(circle.get(5), 6);
-        MapsActivity.addMarker(circle.get(6), 7);
-        MapsActivity.addMarker(circle.get(7), 8);
+        m1 = MapsActivity.addMarker(circle.get(0), 1);
+        m2 = MapsActivity.addMarker(circle.get(1), 2);
+        m3 = MapsActivity.addMarker(circle.get(2), 3);
+        m4 = MapsActivity.addMarker(circle.get(3), 4);
+        m5 = MapsActivity.addMarker(circle.get(4), 5);
+        m6 = MapsActivity.addMarker(circle.get(5), 6);
+        m7 = MapsActivity.addMarker(circle.get(6), 7);
+        m8 = MapsActivity.addMarker(circle.get(7), 8);
+        //mGoogleMap.setOnMarkerDragListener(this);
     }
+
 
     public void calcLoop(){
         clicks = 1028;
         lat = MapsActivity.location.getLatitude();
         lng = MapsActivity.location.getLongitude();
 
-        String input = MapsActivity.mEditDistance.getText().toString();
+        //String input = MapsActivity.mEditDistance.getText().toString();
+        String inputMiles = MapsActivity.mEditDistance.getText().toString();
+        double inMiles = Double.parseDouble(inputMiles);
+        double inKilometers = (.6214)*inMiles;
+        String inputKilometers = String.valueOf(inKilometers);
 
-        double circumference = Double.parseDouble(input)-Double.parseDouble(input)*.1;
+        double circumference;
+
+        if(MapsActivity.kiloIsLength) {
+            circumference = Double.parseDouble(inputKilometers)-Double.parseDouble(inputKilometers)*.1;
+        }
+        else {
+            circumference = Double.parseDouble(inputMiles) - Double.parseDouble(inputMiles) * .1;
+        }
+
+
+        //double circumference = Double.parseDouble(input)-Double.parseDouble(input)*.1;
         float distance = (float) (circumference / Math.PI);
         changeInLat = (float) Math.toDegrees(distance / MapsActivity.radOfEarth);
         changeInLng = (float) Math.toDegrees(distance / MapsActivity.radOfEarth);
@@ -220,6 +290,7 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
 
         makeLoop(southLoop(lat, lng, changeInLat, changeInLng));
     }
+
     public void handleGetDirectionsResult(ArrayList<LatLng> directionPoints) {
 
         rectLine = new PolylineOptions().width(10).color(Color.RED);
@@ -231,11 +302,17 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
 
         mPolyline = this.mGoogleMap.addPolyline(rectLine);
 
-        meters = GetDirectionsAsyncTask.distance;
-        miles = (double) meters/1600;
-        mDistance.setText("Distance: " + df.format(miles) + " mi");
-        Altitude = GetDirectionsAsyncTask.altitude;
-        mAltitude.setText("Altitude: " + df.format(Altitude) + " m");
+        if(MapsActivity.kiloIsLength) {
+            meters = GetDirectionsAsyncTask.distance;
+            kilometers = (double) meters/1000;
+            mTextview.setText("Distance: " + kilometers + " km");
+        }
+        else {
+            meters = GetDirectionsAsyncTask.distance;
+            miles = (double) meters/1600;
+            mTextview.setText("Distance: " + miles + " mi");
+        }
+
     }
     public static ArrayList<LatLng> southLoop (double lat, double lng, float changeInLat, float changeInLng){
         ArrayList<LatLng> circle = new ArrayList<LatLng>();
