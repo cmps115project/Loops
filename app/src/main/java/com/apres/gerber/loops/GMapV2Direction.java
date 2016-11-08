@@ -133,11 +133,9 @@ public class GMapV2Direction {
             HttpContext localContext = new BasicHttpContext();
             try {
                 HttpGet httpGet = new HttpGet(url);
-                //HttpPost httpPost = new HttpPost(url);
 
                 HttpResponse response = httpClient.execute(httpGet, localContext);
                 HttpEntity entity = response.getEntity();
-               // response.getEntity().getContent().close();
                 if (entity != null) {
                     InputStream instream = entity.getContent();
                     int r = -1;
