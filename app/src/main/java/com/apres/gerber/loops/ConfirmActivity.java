@@ -9,6 +9,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.*;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -24,6 +25,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,11 +38,15 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
     private Button mSubmit;
     private Button mNext;
     private Button mPrev;
-    public static TextView mTextview;
+    public static TextView mDistance;
+    public static TextView mAltitude;
     private MenuItem mMenuItem;
     public static double miles;
     public static int meters;
+    public static double Altitude;
+    static DecimalFormat df = new DecimalFormat("00.000");
     public int clicks = 0;
+
 
     public double lat = MapsActivity.lat;
     public double lng = MapsActivity.lng;
@@ -64,16 +70,14 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
 
         super.onOptionsItemSelected(mMenuItem);
 
-        //Intent prevIntent = new Intent(.getContext(),MapsActivity.class);
-        //startActivityForResult(myIntent,0);
-
         mSubmit = (Button) findViewById(R.id.Submit);
         mSubmit.setOnClickListener(this);
         mNext = (Button) findViewById(R.id.next);
         mNext.setOnClickListener(this);
         mPrev = (Button) findViewById(R.id.prev);
         mPrev.setOnClickListener(this);
-        mTextview = (TextView) findViewById(R.id.distance);
+        mDistance = (TextView) findViewById(R.id.distance);
+        mAltitude = (TextView) findViewById(R.id.altitude);
 
         setMapSettings();
         calcLoop();
@@ -126,6 +130,14 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         }
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -135,7 +147,7 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
                 startActivityForResult(myIntent,0);
                 return true;
             case R.id.option1:
-                //TODO add what to do
+
                 return true;
 
             case R.id.option2:
@@ -206,7 +218,6 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
             mGoogleMap.clear();
         }
 
-
         makeLoop(southLoop(lat, lng, changeInLat, changeInLng));
     }
     public void handleGetDirectionsResult(ArrayList<LatLng> directionPoints) {
@@ -222,8 +233,9 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
 
         meters = GetDirectionsAsyncTask.distance;
         miles = (double) meters/1600;
-        mTextview.setText("Distance: " + miles + " mi");
-
+        mDistance.setText("Distance: " + df.format(miles) + " mi");
+        Altitude = GetDirectionsAsyncTask.altitude;
+        mAltitude.setText("Altitude: " + df.format(Altitude) + " m");
     }
     public static ArrayList<LatLng> southLoop (double lat, double lng, float changeInLat, float changeInLng){
         ArrayList<LatLng> circle = new ArrayList<LatLng>();

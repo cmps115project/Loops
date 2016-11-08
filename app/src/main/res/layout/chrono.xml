@@ -28,6 +28,15 @@
             android:textColor="@color/white"
             android:layout_weight="1"/>
 
+        <TextView
+            android:text="Altitude:"
+            android:textSize="25dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/altitude2"
+            android:textColor="@color/white"
+            android:layout_weight="1"/>
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -59,7 +68,7 @@
 
         <Chronometer
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="40dp"
             android:format="%s"
             android:id="@+id/chronometer"
             android:textSize="40dp"
