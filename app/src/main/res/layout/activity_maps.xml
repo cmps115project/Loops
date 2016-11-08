@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:orientation="vertical"
@@ -16,12 +17,12 @@
         android:background="@color/black"
         android:id="@+id/findLoops"
         android:weightSum="1"
-        android:layout_weight="40">
+        android:layout_weight="78.00">
 
         <EditText
             android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:text="Distance (Miles)"
+            android:layout_height="10dp"
+            android:text=" Distance "
             android:id="@+id/edt_text"
             android:background="@color/grey_light"
             android:layout_marginTop="5dp"
@@ -35,6 +36,25 @@
             android:layout_weight="0.77">
         </EditText>
 
+        <Spinner
+            android:layout_height="40dp"
+            android:dropDownWidth="fill_parent"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="0dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:id="@+id/lengthSetter"
+            android:entries="@array/Length"
+            android:layout_column="1"
+            android:spinnerMode="dropdown"
+            android:background="@color/grey_light"
+            android:dropDownSelector="@color/grey_light"
+            android:longClickable="true"
+            app:spinnerMode="dropdown"
+            android:layout_weight="0.17"
+            android:layout_width="fill_parent" />
+
+
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -46,8 +66,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="10dp"
-            android:longClickable="true"
-            />
+            android:longClickable="true" />
 
     </LinearLayout>
 
@@ -57,14 +76,15 @@
         android:layout_weight="120"
         android:orientation="vertical"
         android:background="@color/black"
-        android:id="@+id/mapFragment">
+        android:id="@+id/mapFragment"
+        android:weightSum="1">
 
         <fragment
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:id="@+id/map"
             tools:context=".MapsActivity"
-            android:name="com.google.android.gms.maps.SupportMapFragment"/>
+            android:name="com.google.android.gms.maps.SupportMapFragment" />
     </LinearLayout>
 
 </LinearLayout>
