@@ -37,6 +37,20 @@
         </activity>
         <activity android:name=".ConfirmActivity"></activity>
         <activity android:name=".ChronoActivity"></activity>
+
+        <activity
+            android:name="com.apres.gerber.loops.ShareTextActivity"
+            android:label="@string/title_share_text"
+            android:parentActivityName="com.apres.gerber.loops.ConfirmActivity">
+        </activity>
+
+        <activity
+            android:name="com.apres.gerber.loops.SharePictureActivity"
+            android:label="@string/title_share_pic"
+            android:parentActivityName="com.apres.gerber.loops.ConfirmActivity">
+        </activity>
+
+
     </application>
 
 </manifest>
