@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.*;
 import android.view.MenuItem;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -33,6 +34,7 @@ import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.text.DecimalFormat;
 
 /**
  * Created by cedriclinares on 10/23/16.
@@ -57,6 +59,10 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
     public static double miles;
     public static double kilometers;
     public static int meters;
+    public static TextView mAltitude;
+    public static double Altitude;
+    public static TextView mDistance;
+    static DecimalFormat df = new DecimalFormat("00.000");
     public int clicks = 0;
 
 
@@ -92,6 +98,9 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         mPrev = (Button) findViewById(R.id.prev);
         mPrev.setOnClickListener(this);
         mTextview = (TextView) findViewById(R.id.distance);
+        mDistance = (TextView) findViewById(R.id.distance);
+        mAltitude = (TextView) findViewById(R.id.altitude);
+        
 
 //        LatLng num = new LatLng(36.11, -122.01);
 //        Marker m112 = new Marker({
@@ -192,6 +201,13 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         }
 
     }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -269,7 +285,10 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         String inputKilometers = String.valueOf(inKilometers);
 
         double circumference;
-
+        
+        Altitude = GetDirectionsAsyncTask.altitude;
+        mAltitude.setText("Altitude: " + df.format(Altitude) + " m");
+        
         if(MapsActivity.kiloIsLength) {
             circumference = Double.parseDouble(inputKilometers)-Double.parseDouble(inputKilometers)*.1;
         }
