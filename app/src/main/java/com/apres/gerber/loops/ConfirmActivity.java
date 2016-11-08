@@ -103,6 +103,7 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
 
         setMapSettings();
         calcLoop();
+        setupShareEvents();
 
     }
 
@@ -152,13 +153,13 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         }
 
     }
-
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -234,7 +235,10 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         String inputKilometers = String.valueOf(inKilometers);
 
         double circumference;
-
+        
+        Altitude = GetDirectionsAsyncTask.altitude;
+        mAltitude.setText("Altitude: " + df.format(Altitude) + " m");
+        
         if(MapsActivity.kiloIsLength) {
             circumference = Double.parseDouble(inputKilometers)-Double.parseDouble(inputKilometers)*.1;
         }
@@ -275,8 +279,6 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
             miles = (double) meters/1600;
             mTextview.setText("Distance: " + miles + " mi");
         }
-        Altitude = GetDirectionsAsyncTask.altitude;
-        mAltitude.setText("Altitude: " + df.format(Altitude) + " m");
 
     }
     public static ArrayList<LatLng> southLoop (double lat, double lng, float changeInLat, float changeInLng){
@@ -395,6 +397,30 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
             Toast.makeText(this, "No Location Found", Toast.LENGTH_LONG).show();
         }
 
+    }
+
+
+    // Events for Sharing text and pictures
+    private void setupShareEvents() {
+        Button shareTextButton = (Button) findViewById(R.id.main_share_text_button);
+        shareTextButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick (View v) {
+                Intent intent = new Intent(getApplicationContext(), ShareTextActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button sharePicButton = (Button) findViewById(R.id.main_share_picture_button);
+        sharePicButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick (View v) {
+                Intent intent = new Intent (getApplicationContext(), SharePictureActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
 }
