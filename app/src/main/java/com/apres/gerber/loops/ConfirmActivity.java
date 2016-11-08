@@ -220,7 +220,6 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         m6 = MapsActivity.addMarker(circle.get(5), 6);
         m7 = MapsActivity.addMarker(circle.get(6), 7);
         m8 = MapsActivity.addMarker(circle.get(7), 8);
-        //mGoogleMap.setOnMarkerDragListener(this);
     }
 
 
@@ -229,7 +228,6 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         lat = MapsActivity.location.getLatitude();
         lng = MapsActivity.location.getLongitude();
 
-        //String input = MapsActivity.mEditDistance.getText().toString();
         String inputMiles = MapsActivity.mEditDistance.getText().toString();
         double inMiles = Double.parseDouble(inputMiles);
         double inKilometers = (.6214)*inMiles;
@@ -247,8 +245,6 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
             circumference = Double.parseDouble(inputMiles) - Double.parseDouble(inputMiles) * .1;
         }
 
-
-        //double circumference = Double.parseDouble(input)-Double.parseDouble(input)*.1;
         float distance = (float) (circumference / Math.PI);
         changeInLat = (float) Math.toDegrees(distance / MapsActivity.radOfEarth);
         changeInLng = (float) Math.toDegrees(distance / MapsActivity.radOfEarth);
