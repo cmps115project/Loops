@@ -236,9 +236,6 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
 
         double circumference;
         
-        Altitude = GetDirectionsAsyncTask.altitude;
-        mAltitude.setText("Altitude: " + df.format(Altitude) + " m");
-        
         if(MapsActivity.kiloIsLength) {
             circumference = Double.parseDouble(inputKilometers)-Double.parseDouble(inputKilometers)*.1;
         }
@@ -279,6 +276,8 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
             miles = (double) meters/1600;
             mTextview.setText("Distance: " + miles + " mi");
         }
+        Altitude = GetDirectionsAsyncTask.altitude;
+        mAltitude.setText("Altitude: " + df.format(Altitude) + " m");
 
     }
     public static ArrayList<LatLng> southLoop (double lat, double lng, float changeInLat, float changeInLng){
