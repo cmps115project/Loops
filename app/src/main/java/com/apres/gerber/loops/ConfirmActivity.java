@@ -118,7 +118,7 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
-                Toast.makeText(ConfirmActivity.this, marker.getId() + " has been dropped.",
+                Toast.makeText(ConfirmActivity.this, "Marker has been dropped.",
                         Toast.LENGTH_SHORT).show();
                 updateRoute();
 
