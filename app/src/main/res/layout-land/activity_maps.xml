@@ -129,7 +129,20 @@
               android:layout_height="fill_parent"
               android:id="@+id/map"
               tools:context=".MapsActivity"
+              android:layout_weight="1"
               android:name="com.google.android.gms.maps.SupportMapFragment"/>
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Start"
+            android:id="@+id/start_button"
+            android:background="@color/green"
+            android:textColor="@color/turquoise"
+            android:longClickable="true"
+            android:layout_weight="1"
+            />
+
     </LinearLayout>
 
 </LinearLayout>

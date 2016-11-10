@@ -7,6 +7,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.*;
 import android.view.MenuItem;
@@ -36,11 +37,13 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
     private Button mSubmit;
     private Button mNext;
     private Button mPrev;
+    private Button mStart;
     public static TextView mTextview;
     private MenuItem mMenuItem;
     public static double miles;
     public static int meters;
     public int clicks = 0;
+    ArrayList<LatLng> coordArray = new ArrayList<LatLng>();
 
     public double lat = MapsActivity.lat;
     public double lng = MapsActivity.lng;
@@ -74,6 +77,9 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         mPrev = (Button) findViewById(R.id.prev);
         mPrev.setOnClickListener(this);
         mTextview = (TextView) findViewById(R.id.distance);
+        mStart = (Button) findViewById(R.id.start_button);
+        mStart.setOnClickListener(this);
+
 
         setMapSettings();
         calcLoop();
@@ -92,16 +98,20 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
                 clicks++;
                 switch (clicks % 4) {
                     case 0:
-                        makeLoop(southLoop(lat, lng, changeInLat, changeInLng));
+                        coordArray = southLoop(lat, lng, changeInLat, changeInLng);
+                        makeLoop(coordArray);
                         break;
                     case 1:
-                        makeLoop(eastLoop(lat, lng, changeInLat, changeInLng));
+                        coordArray = eastLoop(lat, lng, changeInLat, changeInLng);
+                        makeLoop(coordArray);
                         break;
                     case 2:
-                        makeLoop(northLoop(lat, lng, changeInLat, changeInLng));
+                        coordArray = northLoop(lat, lng, changeInLat, changeInLng);
+                        makeLoop(coordArray);
                         break;
                     case 3:
-                        makeLoop(westLoop(lat, lng, changeInLat, changeInLng));
+                        coordArray = westLoop(lat, lng, changeInLat, changeInLng);
+                        makeLoop(coordArray);
                         break;
                 }
                 break;
@@ -110,19 +120,47 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
                 clicks--;
                 switch (clicks % 4) {
                     case 0:
-                        makeLoop(southLoop(lat, lng, changeInLat, changeInLng));
+                        coordArray = southLoop(lat, lng, changeInLat, changeInLng);
+                        makeLoop(coordArray);
                         break;
                     case 1:
-                        makeLoop(eastLoop(lat, lng, changeInLat, changeInLng));
+                        coordArray = eastLoop(lat, lng, changeInLat, changeInLng);
+                        makeLoop(coordArray);
                         break;
                     case 2:
-                        makeLoop(northLoop(lat, lng, changeInLat, changeInLng));
+                        coordArray = northLoop(lat, lng, changeInLat, changeInLng);
+                        makeLoop(coordArray);
                         break;
                     case 3:
-                        makeLoop(westLoop(lat, lng, changeInLat, changeInLng));
+                        coordArray = westLoop(lat, lng, changeInLat, changeInLng);
+                        makeLoop(coordArray);
                         break;
                 }
                 break;
+            case R.id.start_button:
+                    Uri gmmIntentUri = Uri.parse("google.navigation:q="+
+                            String.valueOf(coordArray.get(0).latitude)+","+
+                            String.valueOf(coordArray.get(0).longitude)+","+
+                            String.valueOf(coordArray.get(1).latitude)+","+
+                            String.valueOf(coordArray.get(1).longitude)+","+
+                            String.valueOf(coordArray.get(2).latitude)+","+
+                            String.valueOf(coordArray.get(2).longitude)+","+
+                            String.valueOf(coordArray.get(3).latitude)+","+
+                            String.valueOf(coordArray.get(3).longitude)+","+
+                            String.valueOf(coordArray.get(4).latitude)+","+
+                            String.valueOf(coordArray.get(4).longitude)+","+
+                            String.valueOf(coordArray.get(5).latitude)+","+
+                            String.valueOf(coordArray.get(5).longitude)+","+
+                            String.valueOf(coordArray.get(6).latitude)+","+
+                            String.valueOf(coordArray.get(6).longitude)+","+
+                            String.valueOf(coordArray.get(7).latitude)+","+
+                            String.valueOf(coordArray.get(7).longitude)
+                    );
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    if (mapIntent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(mapIntent);
+                    }
+
         }
 
     }
@@ -206,8 +244,8 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
             mGoogleMap.clear();
         }
 
-
-        makeLoop(southLoop(lat, lng, changeInLat, changeInLng));
+        coordArray = southLoop(lat, lng, changeInLat, changeInLng);
+        makeLoop(coordArray);
     }
     public void handleGetDirectionsResult(ArrayList<LatLng> directionPoints) {
 
