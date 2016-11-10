@@ -104,6 +104,45 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         setMapSettings();
         calcLoop();
         setupShareEvents();
+        
+        mGoogleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+                //No code goes here
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+                //No code goes here
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                Toast.makeText(ConfirmActivity.this, marker.getId() + " has been dropped.",
+                        Toast.LENGTH_SHORT).show();
+                updateRoute();
+
+            }
+        });
+
+    }
+    
+    public void updateRoute() {
+
+        mGoogleMap.clear();
+
+        ArrayList<LatLng> updatedMarkers = new ArrayList<LatLng>();
+
+        updatedMarkers.add(m1.getPosition());
+        updatedMarkers.add(m2.getPosition());
+        updatedMarkers.add(m3.getPosition());
+        updatedMarkers.add(m4.getPosition());
+        updatedMarkers.add(m5.getPosition());
+        updatedMarkers.add(m6.getPosition());
+        updatedMarkers.add(m7.getPosition());
+        updatedMarkers.add(m8.getPosition());
+
+        makeLoop(updatedMarkers);
 
     }
 
