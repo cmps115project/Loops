@@ -46,11 +46,10 @@
             android:id="@+id/lengthSetter"
             android:entries="@array/Length"
             android:layout_column="1"
-            android:spinnerMode="dropdown"
             android:background="@color/grey_light"
             android:dropDownSelector="@color/grey_light"
             android:longClickable="true"
-            app:spinnerMode="dropdown"
+            android:spinnerMode="dropdown"
             android:layout_weight="0.17"
             android:layout_width="fill_parent" />
 

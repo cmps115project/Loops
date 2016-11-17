@@ -1,12 +1,15 @@
 package com.apres.gerber.loops;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.*;
 import android.view.MenuItem;
@@ -19,6 +22,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -30,6 +37,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,6 +72,7 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
     public static TextView mDistance;
     static DecimalFormat df = new DecimalFormat("00.000");
     public int clicks = 0;
+    ArrayList<LatLng> coordArray = new ArrayList<LatLng>();
 
 
     public double lat = MapsActivity.lat;
@@ -74,6 +83,12 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
     public static float constant = (float) Math.sqrt(2) / 2;
     public static PolylineOptions rectLine;
     public static Polyline mPolyline;
+    MapDBHelper mDbHelper = new MapDBHelper(this);
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,8 +119,8 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         setMapSettings();
         calcLoop();
         setupShareEvents();
-        
-        mGoogleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+
+        mGoogleMap.setOnMarkerDragListener(new OnMarkerDragListener() {
             @Override
             public void onMarkerDragStart(Marker marker) {
                 //No code goes here
@@ -125,8 +140,11 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
 
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
-    
+
     public void updateRoute() {
 
         mGoogleMap.clear();
@@ -150,24 +168,45 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         switch (v.getId()) {
             case R.id.Submit:
                 MapsActivity.location = MapsActivity.locationManager.getLastKnownLocation(MapsActivity.provider);
-                Intent myIntent = new Intent(v.getContext(),ChronoActivity.class);
-                startActivityForResult(myIntent,0);
+                Intent myIntent = new Intent(v.getContext(), ChronoActivity.class);
+                startActivityForResult(myIntent, 0);
+                //add code here to save route
+
+                Gson gson = new Gson();
+
+                String inputString = gson.toJson(coordArray);
+
+                SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+                ContentValues values = new ContentValues();
+
+                values.put(MapReaderContract.MapEntry.COLUMN_ROUTE, inputString);
+                long newRowId;
+                newRowId = db.insert(
+                        MapReaderContract.MapEntry.TABLE_NAME,
+                        null,
+                        values);
+
                 break;
             case R.id.next:
                 mGoogleMap.clear();
                 clicks++;
                 switch (clicks % 4) {
                     case 0:
-                        makeLoop(southLoop(lat, lng, changeInLat, changeInLng));
+                        coordArray = southLoop(lat, lng, changeInLat, changeInLng);
+                        makeLoop(coordArray);
                         break;
                     case 1:
-                        makeLoop(eastLoop(lat, lng, changeInLat, changeInLng));
+                        coordArray = eastLoop(lat, lng, changeInLat, changeInLng);
+                        makeLoop(coordArray);
                         break;
                     case 2:
-                        makeLoop(northLoop(lat, lng, changeInLat, changeInLng));
+                        coordArray = northLoop(lat, lng, changeInLat, changeInLng);
+                        makeLoop(coordArray);
                         break;
                     case 3:
-                        makeLoop(westLoop(lat, lng, changeInLat, changeInLng));
+                        coordArray = westLoop(lat, lng, changeInLat, changeInLng);
+                        makeLoop(coordArray);
                         break;
                 }
                 break;
@@ -176,36 +215,40 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
                 clicks--;
                 switch (clicks % 4) {
                     case 0:
-                        makeLoop(southLoop(lat, lng, changeInLat, changeInLng));
+                        coordArray = southLoop(lat, lng, changeInLat, changeInLng);
+                        makeLoop(coordArray);
                         break;
                     case 1:
-                        makeLoop(eastLoop(lat, lng, changeInLat, changeInLng));
+                        coordArray = eastLoop(lat, lng, changeInLat, changeInLng);
+                        makeLoop(coordArray);
                         break;
                     case 2:
-                        makeLoop(northLoop(lat, lng, changeInLat, changeInLng));
+                        coordArray = northLoop(lat, lng, changeInLat, changeInLng);
+                        makeLoop(coordArray);
                         break;
                     case 3:
-                        makeLoop(westLoop(lat, lng, changeInLat, changeInLng));
+                        coordArray = westLoop(lat, lng, changeInLat, changeInLng);
+                        makeLoop(coordArray);
                         break;
                 }
                 break;
         }
 
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-    
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 Toast.makeText(this, "Home Button Pressed", Toast.LENGTH_LONG);
                 Intent myIntent = new Intent(ConfirmActivity.this, MapsActivity.class);
-                startActivityForResult(myIntent,0);
+                startActivityForResult(myIntent, 0);
                 return true;
             case R.id.option1:
                 //TODO add what to do
@@ -223,8 +266,7 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    public void findDirections(ArrayList <LatLng> circle, String mode)
-    {
+    public void findDirections(ArrayList<LatLng> circle, String mode) {
 
         Map<String, String> map = new HashMap<String, String>();
 
@@ -250,7 +292,7 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         asyncTask.execute(map);
     }
 
-    public void makeLoop (ArrayList<LatLng> circle) {
+    public void makeLoop(ArrayList<LatLng> circle) {
         findDirections(circle, GMapV2Direction.MODE_WALKING);
         m1 = MapsActivity.addMarker(circle.get(0), 1);
         m2 = MapsActivity.addMarker(circle.get(1), 2);
@@ -263,22 +305,21 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
-    public void calcLoop(){
+    public void calcLoop() {
         clicks = 1028;
         lat = MapsActivity.location.getLatitude();
         lng = MapsActivity.location.getLongitude();
 
         String inputMiles = MapsActivity.mEditDistance.getText().toString();
         double inMiles = Double.parseDouble(inputMiles);
-        double inKilometers = (.6214)*inMiles;
+        double inKilometers = (.6214) * inMiles;
         String inputKilometers = String.valueOf(inKilometers);
 
         double circumference;
-        
-        if(MapsActivity.kiloIsLength) {
-            circumference = Double.parseDouble(inputKilometers)-Double.parseDouble(inputKilometers)*.1;
-        }
-        else {
+
+        if (MapsActivity.kiloIsLength) {
+            circumference = Double.parseDouble(inputKilometers) - Double.parseDouble(inputKilometers) * .1;
+        } else {
             circumference = Double.parseDouble(inputMiles) - Double.parseDouble(inputMiles) * .1;
         }
 
@@ -291,45 +332,45 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
             mGoogleMap.clear();
         }
 
-        makeLoop(southLoop(lat, lng, changeInLat, changeInLng));
+        coordArray = southLoop(lat, lng, changeInLat, changeInLng);
+        makeLoop(coordArray);
     }
 
     public void handleGetDirectionsResult(ArrayList<LatLng> directionPoints) {
 
         rectLine = new PolylineOptions().width(10).color(Color.RED);
 
-        for(int i = 0 ; i < directionPoints.size() ; i++)
-        {
+        for (int i = 0; i < directionPoints.size(); i++) {
             rectLine.add(directionPoints.get(i));
         }
 
         mPolyline = this.mGoogleMap.addPolyline(rectLine);
 
-        if(MapsActivity.kiloIsLength) {
+        if (MapsActivity.kiloIsLength) {
             meters = GetDirectionsAsyncTask.distance;
-            kilometers = (double) meters/1000;
+            kilometers = (double) meters / 1000;
             mTextview.setText("Distance: " + kilometers + " km");
-        }
-        else {
+        } else {
             meters = GetDirectionsAsyncTask.distance;
-            miles = (double) meters/1600;
+            miles = (double) meters / 1600;
             mTextview.setText("Distance: " + miles + " mi");
         }
         Altitude = GetDirectionsAsyncTask.altitude;
         mAltitude.setText("Altitude: " + df.format(Altitude) + " m");
 
     }
-    public static ArrayList<LatLng> southLoop (double lat, double lng, float changeInLat, float changeInLng){
+
+    public static ArrayList<LatLng> southLoop(double lat, double lng, float changeInLat, float changeInLng) {
         ArrayList<LatLng> circle = new ArrayList<LatLng>();
 
         LatLng point1 = new LatLng(lat, lng);
-        LatLng point2 = new LatLng(lat - changeInLat*(1-constant)/2, lng - changeInLng*constant/2);
-        LatLng point3 = new LatLng(lat - changeInLat/2, lng - changeInLng/2);
-        LatLng point4 = new LatLng(lat - changeInLat/2-changeInLat*constant/2, lng - changeInLng*constant/2);
+        LatLng point2 = new LatLng(lat - changeInLat * (1 - constant) / 2, lng - changeInLng * constant / 2);
+        LatLng point3 = new LatLng(lat - changeInLat / 2, lng - changeInLng / 2);
+        LatLng point4 = new LatLng(lat - changeInLat / 2 - changeInLat * constant / 2, lng - changeInLng * constant / 2);
         LatLng point5 = new LatLng(lat - changeInLat, lng);
-        LatLng point6 = new LatLng(lat - changeInLat/2-changeInLat*constant/2, lng + changeInLng*constant/2);
-        LatLng point7 = new LatLng(lat - changeInLat/2, lng + changeInLng/2);
-        LatLng point8 = new LatLng(lat - changeInLat*(1-constant)/2, lng + changeInLng*constant/2);
+        LatLng point6 = new LatLng(lat - changeInLat / 2 - changeInLat * constant / 2, lng + changeInLng * constant / 2);
+        LatLng point7 = new LatLng(lat - changeInLat / 2, lng + changeInLng / 2);
+        LatLng point8 = new LatLng(lat - changeInLat * (1 - constant) / 2, lng + changeInLng * constant / 2);
 
         circle.add(0, point1);
         circle.add(1, point2);
@@ -342,17 +383,17 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         return circle;
     }
 
-    public static ArrayList<LatLng> northLoop (double lat, double lng, float changeInLat, float changeInLng){
+    public static ArrayList<LatLng> northLoop(double lat, double lng, float changeInLat, float changeInLng) {
         ArrayList<LatLng> circle = new ArrayList<LatLng>();
 
         LatLng point1 = new LatLng(lat, lng);
-        LatLng point2 = new LatLng(lat + changeInLat*(1-constant)/2, lng - changeInLng*constant/2);
-        LatLng point3 = new LatLng(lat + changeInLat/2, lng - changeInLng/2);
-        LatLng point4 = new LatLng(lat + changeInLat/2 + changeInLat*constant/2, lng - changeInLng*constant/2);
+        LatLng point2 = new LatLng(lat + changeInLat * (1 - constant) / 2, lng - changeInLng * constant / 2);
+        LatLng point3 = new LatLng(lat + changeInLat / 2, lng - changeInLng / 2);
+        LatLng point4 = new LatLng(lat + changeInLat / 2 + changeInLat * constant / 2, lng - changeInLng * constant / 2);
         LatLng point5 = new LatLng(lat + changeInLat, lng);
-        LatLng point6 = new LatLng(lat + changeInLat/2 + changeInLat*constant/2, lng + changeInLng*constant/2);
-        LatLng point7 = new LatLng(lat + changeInLat/2, lng + changeInLng/2);
-        LatLng point8 = new LatLng(lat + changeInLat*(1-constant)/2, lng + changeInLng*constant/2);
+        LatLng point6 = new LatLng(lat + changeInLat / 2 + changeInLat * constant / 2, lng + changeInLng * constant / 2);
+        LatLng point7 = new LatLng(lat + changeInLat / 2, lng + changeInLng / 2);
+        LatLng point8 = new LatLng(lat + changeInLat * (1 - constant) / 2, lng + changeInLng * constant / 2);
 
         circle.add(0, point1);
         circle.add(1, point2);
@@ -366,18 +407,18 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         return circle;
     }
 
-    public static ArrayList<LatLng> eastLoop (double lat, double lng, float changeInLat, float changeInLng){
+    public static ArrayList<LatLng> eastLoop(double lat, double lng, float changeInLat, float changeInLng) {
         ArrayList<LatLng> circle = new ArrayList<LatLng>();
 
 
         LatLng point1 = new LatLng(lat, lng);
-        LatLng point2 = new LatLng(lat - changeInLat*constant/2,lng + changeInLng*(1-constant)/2);
-        LatLng point3 = new LatLng(lat - changeInLat/2, lng + changeInLng/2);
-        LatLng point4 = new LatLng(lat - changeInLat*constant/2, lng + changeInLng/2 + changeInLng*constant/2);
-        LatLng point5 = new LatLng(lat,lng + changeInLng);
-        LatLng point6 = new LatLng(lat + changeInLat*constant/2, lng + changeInLng/2 + changeInLng*constant/2);
-        LatLng point7 = new LatLng(lat + changeInLat/2, lng + changeInLng/2);
-        LatLng point8 = new LatLng(lat + changeInLat*constant/2, lng + changeInLng*(1-constant)/2);
+        LatLng point2 = new LatLng(lat - changeInLat * constant / 2, lng + changeInLng * (1 - constant) / 2);
+        LatLng point3 = new LatLng(lat - changeInLat / 2, lng + changeInLng / 2);
+        LatLng point4 = new LatLng(lat - changeInLat * constant / 2, lng + changeInLng / 2 + changeInLng * constant / 2);
+        LatLng point5 = new LatLng(lat, lng + changeInLng);
+        LatLng point6 = new LatLng(lat + changeInLat * constant / 2, lng + changeInLng / 2 + changeInLng * constant / 2);
+        LatLng point7 = new LatLng(lat + changeInLat / 2, lng + changeInLng / 2);
+        LatLng point8 = new LatLng(lat + changeInLat * constant / 2, lng + changeInLng * (1 - constant) / 2);
 
         circle.add(0, point1);
         circle.add(1, point2);
@@ -391,17 +432,17 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         return circle;
     }
 
-    public static ArrayList<LatLng> westLoop (double lat, double lng, float changeInLat, float changeInLng){
+    public static ArrayList<LatLng> westLoop(double lat, double lng, float changeInLat, float changeInLng) {
         ArrayList<LatLng> circle = new ArrayList<LatLng>();
 
         LatLng point1 = new LatLng(lat, lng);
-        LatLng point2 = new LatLng(lat - changeInLat*constant/2,lng - changeInLng*(1-constant)/2);
-        LatLng point3 = new LatLng(lat - changeInLat/2, lng - changeInLng/2);
-        LatLng point4 = new LatLng(lat - changeInLat*constant/2, lng - changeInLng/2 - changeInLng*constant/2);
-        LatLng point5 = new LatLng(lat,lng - changeInLng);
-        LatLng point6 = new LatLng(lat + changeInLat*constant/2, lng - changeInLng/2 - changeInLng*constant/2);
-        LatLng point7 = new LatLng(lat + changeInLat/2, lng - changeInLng/2);
-        LatLng point8 = new LatLng(lat + changeInLat*constant/2, lng - changeInLng*(1-constant)/2);
+        LatLng point2 = new LatLng(lat - changeInLat * constant / 2, lng - changeInLng * (1 - constant) / 2);
+        LatLng point3 = new LatLng(lat - changeInLat / 2, lng - changeInLng / 2);
+        LatLng point4 = new LatLng(lat - changeInLat * constant / 2, lng - changeInLng / 2 - changeInLng * constant / 2);
+        LatLng point5 = new LatLng(lat, lng - changeInLng);
+        LatLng point6 = new LatLng(lat + changeInLat * constant / 2, lng - changeInLng / 2 - changeInLng * constant / 2);
+        LatLng point7 = new LatLng(lat + changeInLat / 2, lng - changeInLng / 2);
+        LatLng point8 = new LatLng(lat + changeInLat * constant / 2, lng - changeInLng * (1 - constant) / 2);
 
 
         circle.add(0, point1);
@@ -416,7 +457,7 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         return circle;
     }
 
-    public void setMapSettings(){
+    public void setMapSettings() {
         MapsActivity.mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         ConfirmActivity.mGoogleMap = MapsActivity.mapFragment.getMap();
@@ -444,7 +485,7 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         shareTextButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
-            public void onClick (View v) {
+            public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ShareTextActivity.class);
                 startActivity(intent);
             }
@@ -454,11 +495,46 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         sharePicButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
-            public void onClick (View v) {
-                Intent intent = new Intent (getApplicationContext(), SharePictureActivity.class);
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), SharePictureActivity.class);
                 startActivity(intent);
             }
         });
     }
 
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+   /* public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Confirm Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
+    } */
 }
