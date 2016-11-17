@@ -4,9 +4,13 @@ import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
@@ -14,6 +18,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
@@ -113,6 +118,57 @@ public class GMapV2Direction {
         Node node1 = nl1.item(0);
         Log.i("CopyRights", node1.getTextContent());
         return node1.getTextContent();
+    }
+
+    public static double getAltitude(LatLng[] points) {
+        double[] elevation = new double[points.length];
+        double result=0.0;
+        for (int i=0;i<points.length;i++) {
+            String url = "http://maps.googleapis.com/maps/api/elevation/"
+                    + "xml?locations=" + points[i].latitude
+                    + "," + points[i].longitude
+                    + "&sensor=true";
+
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpContext localContext = new BasicHttpContext();
+            try {
+                HttpGet httpGet = new HttpGet(url);
+
+                HttpResponse response = httpClient.execute(httpGet, localContext);
+                HttpEntity entity = response.getEntity();
+                if (entity != null) {
+                    InputStream instream = entity.getContent();
+                    int r = -1;
+                    StringBuffer respStr = new StringBuffer();
+                    while ((r = instream.read()) != -1)
+                        respStr.append((char) r);
+                    String tagOpen = "<elevation>";
+                    String tagClose = "</elevation>";
+                    if (respStr.indexOf(tagOpen) != -1) {
+                        int start = respStr.indexOf(tagOpen) + tagOpen.length();
+                        int end = respStr.indexOf(tagClose);
+                        String value = respStr.substring(start, end);
+                        elevation[i] = Double.parseDouble(value);
+                    }
+                    instream.close();
+                }
+            } catch (ClientProtocolException e) {
+            } catch (IOException e) {
+            }
+        }
+        result = findSumAltitude(elevation);
+        return result;
+
+    }
+
+    static double findSumAltitude(double[] a){
+        double sum = 0;
+        for(int i=1;i<a.length;i++){
+            double diff = a[i-1] - a[i];
+            sum += Math.abs(diff);
+        }
+
+        return sum;
     }
 
     public ArrayList<LatLng> getDirection (Document doc) {

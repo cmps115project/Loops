@@ -24,6 +24,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 
+import org.w3c.dom.Text;
+
 import static com.apres.gerber.loops.R.layout.chrono;
 
 /**
@@ -44,7 +46,8 @@ public class ChronoActivity extends AppCompatActivity implements View.OnClickLis
     boolean startPress=false;
     boolean stopPress=false;
     long time =0;
-    private TextView mTextView;
+    private TextView mDistance;
+    private TextView mAltitude;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,14 +70,15 @@ public class ChronoActivity extends AppCompatActivity implements View.OnClickLis
         resetButton = (Button) findViewById(R.id.reset);
         resetButton.setOnClickListener(this);
         mchrono = (Chronometer) findViewById(R.id.chronometer);
-        mTextView = (TextView) findViewById(R.id.distance2);
+        mDistance = (TextView) findViewById(R.id.distance2);
+        mAltitude = (TextView) findViewById(R.id.altitude2);
 
         locationManager = MapsActivity.locationManager;
         provider = MapsActivity.provider;
         location = MapsActivity.location;
 
-        mTextView.setText("Distance: " + ConfirmActivity.miles + " mi");
-
+        mDistance.setText("Distance: " + ConfirmActivity.miles + " mi");
+        mAltitude.setText("Altitude: " + ConfirmActivity.df.format(ConfirmActivity.Altitude) + " m");
         setMapSettings();
         ConfirmActivity.mPolyline = ConfirmActivity.mGoogleMap.addPolyline(ConfirmActivity.rectLine);
 

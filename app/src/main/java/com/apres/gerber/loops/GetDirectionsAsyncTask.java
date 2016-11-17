@@ -9,6 +9,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import static com.apres.gerber.loops.MapsActivity.lat;
+import static com.apres.gerber.loops.MapsActivity.lng;
+
 public class GetDirectionsAsyncTask extends AsyncTask<Map<String, String>, Object, ArrayList<LatLng>>
 {
     public static final String USER_CURRENT_LAT = "user_current_lat";
@@ -34,6 +37,7 @@ public class GetDirectionsAsyncTask extends AsyncTask<Map<String, String>, Objec
     private Exception exception;
     private ProgressDialog progressDialog;
     public static int distance;
+    public static double altitude;
 
     public GetDirectionsAsyncTask(ConfirmActivity activity)
     {
@@ -78,9 +82,11 @@ public class GetDirectionsAsyncTask extends AsyncTask<Map<String, String>, Objec
             LatLng waypoint6 = new LatLng(Double.valueOf(paramMap.get(Waypoint6_Lat)) , Double.valueOf(paramMap.get(Waypoint6_Long)));
             LatLng waypoint7 = new LatLng(Double.valueOf(paramMap.get(Waypoint7_Lat)) , Double.valueOf(paramMap.get(Waypoint7_Long)));
 
+            LatLng[] pointArray = new LatLng[]{fromPosition, waypoint1, waypoint2, waypoint3, waypoint4, waypoint5, waypoint6, waypoint7};
             GMapV2Direction md = new GMapV2Direction();
             Document doc = md.getDocument(fromPosition, waypoint1, waypoint2, waypoint3, waypoint4, waypoint5, waypoint6, waypoint7, paramMap.get(DIRECTIONS_MODE));
             distance = md.getDistanceValue(doc);
+            altitude = GMapV2Direction.getAltitude(pointArray);
             ArrayList<LatLng> directionPoints = md.getDirection(doc);
             return directionPoints;
         }
