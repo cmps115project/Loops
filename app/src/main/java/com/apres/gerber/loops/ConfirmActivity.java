@@ -266,18 +266,22 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
 
         mPolyline = this.mGoogleMap.addPolyline(rectLine);
 
+        Altitude = GetDirectionsAsyncTask.altitude;
+
         if(MapsActivity.kiloIsLength) {
             meters = GetDirectionsAsyncTask.distance;
             kilometers = (double) meters/1000;
             mTextview.setText("Distance: " + kilometers + " km");
+            mAltitude.setText("Altitude: " + df.format(Altitude) + " m");
         }
         else {
             meters = GetDirectionsAsyncTask.distance;
             miles = (double) meters/1600;
             mTextview.setText("Distance: " + miles + " mi");
+            mAltitude.setText("Altitude: " + df.format(Altitude*3.28) + " ft");
         }
-        Altitude = GetDirectionsAsyncTask.altitude;
-        mAltitude.setText("Altitude: " + df.format(Altitude) + " m");
+
+
 
     }
     public static ArrayList<LatLng> southLoop (double lat, double lng, float changeInLat, float changeInLng){
