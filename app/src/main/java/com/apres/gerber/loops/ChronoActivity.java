@@ -19,6 +19,8 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 
 import com.google.android.gms.fitness.ConfigApi;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -94,6 +96,38 @@ public class ChronoActivity extends AppCompatActivity implements View.OnClickLis
                     mchrono.start();
                     startPress=true;
                     stopPress=false;
+                    // These two lines can just be copy and pasted, they just let us access the db.
+                    MapDBHelper mDbHelper = new MapDBHelper(this);
+                    SQLiteDatabase db = mDbHelper.getReadableDatabase();
+                    // This is an array of things we want to get out of the DB.
+                    // We can ask for everything but only use one thing like in this example.
+                    String[] projection = {
+                            MapReaderContract.MapEntry._ID,
+                            MapReaderContract.MapEntry.COLUMN_ROUTE,
+                            MapReaderContract.MapEntry.COLUMN_DIST,
+                            MapReaderContract.MapEntry.COLUMN_ALT,
+                    };
+                    // Here we make a query and actually get the contents of the DB. For us this can also just be copy and pasted.
+                    Cursor c = db.query(
+                            MapReaderContract.MapEntry.TABLE_NAME,  // The table to query
+                            projection,                               // The columns to return
+                            null,                                // The columns for the WHERE clause
+                            null,                            // The values for the WHERE clause
+                            null,                                     // don't group the rows
+                            null,                                     // don't filter by row groups
+                            null                                 // The sort orderadasd
+                    );
+                    //When it returns, there is no way to guarantee it's sorted so I just moved the cursor to whatever
+                    // is in the first row.
+                    c.moveToFirst();
+                    // Here is where you can pull the actual content out of the cursor, here I took the route, just replace
+                    // COLUMN_ROUTE with whichever column you need.
+                    int itemId = c.getColumnIndexOrThrow(MapReaderContract.MapEntry.COLUMN_ROUTE);
+                    //Change it to a string so we can actually display it.
+                    String className = c.getString(itemId);
+                    // Toast to show it off. 
+                    Toast.makeText(this, className, Toast.LENGTH_LONG).show();
+
                 }
                 break;
             case R.id.stop:
