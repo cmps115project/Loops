@@ -171,17 +171,25 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
                 Intent myIntent = new Intent(v.getContext(), ChronoActivity.class);
                 startActivityForResult(myIntent, 0);
                 //add code here to save route
-
+                // This is just to turn the ArrayList into a string
                 Gson gson = new Gson();
-
+                // Here the ArrayList is turned into a string
                 String inputString = gson.toJson(coordArray);
-
+                // Make a new DataBase, only needs to be called once
                 SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
+                // I think this creates a new object that makes a sql command for us
+                // Basically, make a new one of these when you want to add something to the DB
                 ContentValues values = new ContentValues();
-
-                values.put(MapReaderContract.MapEntry.COLUMN_ROUTE, inputString);
+                // Here we specify which column to add to and what to add to it.
+                // NOTE: you can add to multiple columns at once, for example:
+                // values.put(ClassReaderContract.ClassEntry.COLUMN_CLASS, classText.getText().toString());
+                // values.put(ClassReaderContract.ClassEntry.COLUMN_UNITS, unitsText.getText().toString());
+                // values.put(ClassReaderContract.ClassEntry.COLUMN_STUDY_HOURS, hours.getText().toString());
+                 values.put(MapReaderContract.MapEntry.COLUMN_ROUTE, inputString);
+                // Once you are done adding the values, we insert a new row into the DB.
+                // I don't remember if the RowID is required but I was using in my last project so I kept it just in case.
                 long newRowId;
+                // You can just copy and paste this and it should work.
                 newRowId = db.insert(
                         MapReaderContract.MapEntry.TABLE_NAME,
                         null,
