@@ -35,8 +35,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private LinearLayout mconfirmation;
-    private LinearLayout mfindLoops;
     public static EditText mEditDistance;
     private Button mButton;
     private Spinner lengthSetter;
@@ -50,7 +48,6 @@ public class MapsActivity extends AppCompatActivity implements View.OnClickListe
     public static SupportMapFragment mapFragment;
 
     public static Marker mMarker;
-    public static MenuItem mMenuItem;
 
     public static final float radOfEarth = 3950;
     public static double lat;
@@ -68,17 +65,12 @@ public class MapsActivity extends AppCompatActivity implements View.OnClickListe
         }
         setContentView(R.layout.activity_maps);
 
-        mMenuItem = (MenuItem) findViewById(android.R.id.home);
-
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        super.onOptionsItemSelected(mMenuItem);
 
-        mconfirmation = (LinearLayout) findViewById(R.id.confirmaton);
-        mfindLoops = (LinearLayout) findViewById(R.id.findLoops);
         mEditDistance = (EditText) findViewById(R.id.edt_text);
         mButton = (Button) findViewById(R.id.loop_button);
 
@@ -87,11 +79,6 @@ public class MapsActivity extends AppCompatActivity implements View.OnClickListe
         mEditDistance.setOnClickListener(this);
         mButton.setOnClickListener(this);
         lengthSetter = (Spinner) findViewById(R.id.lengthSetter);
-
-
-
-        //lengthSetter.setOnItemSelectedListener(this);
-
 
         final ArrayAdapter<CharSequence> lengthAdapter = ArrayAdapter.createFromResource(this,
                 R.array.Length, android.R.layout.simple_spinner_dropdown_item);
@@ -222,7 +209,8 @@ public class MapsActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d("CHECK","Home button is pressed");
                 return true;
             case R.id.option1:
-                //TODO add what to do
+                Intent optionIntent = new Intent(MapsActivity.this, dbActivity.class);
+                startActivityForResult(optionIntent, 0);
                 return true;
 
             case R.id.option2:
