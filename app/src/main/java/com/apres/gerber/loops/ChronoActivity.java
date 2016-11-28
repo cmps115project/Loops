@@ -104,8 +104,6 @@ public class ChronoActivity extends AppCompatActivity implements View.OnClickLis
                     String[] projection = {
                             MapReaderContract.MapEntry._ID,
                             MapReaderContract.MapEntry.COLUMN_ROUTE,
-                            MapReaderContract.MapEntry.COLUMN_DIST,
-                            MapReaderContract.MapEntry.COLUMN_ALT,
                     };
                     // Here we make a query and actually get the contents of the DB. For us this can also just be copy and pasted.
                     Cursor c = db.query(
