@@ -62,7 +62,6 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
     private Marker m7;
     private Marker m8;
 
-    public static TextView mTextview;
     private MenuItem mMenuItem;
     public static double miles;
     public static double kilometers;
@@ -72,7 +71,7 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
     public static TextView mDistance;
     static DecimalFormat df = new DecimalFormat("00.000");
     public int clicks = 0;
-    ArrayList<LatLng> coordArray = new ArrayList<LatLng>();
+    public static ArrayList<LatLng> coordArray = new ArrayList<LatLng>();
 
 
     public double lat = MapsActivity.lat;
@@ -83,7 +82,7 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
     public static float constant = (float) Math.sqrt(2) / 2;
     public static PolylineOptions rectLine;
     public static Polyline mPolyline;
-    MapDBHelper mDbHelper = new MapDBHelper(this);
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -95,16 +94,10 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
 
         setContentView(R.layout.confirm);
 
-        mMenuItem = (MenuItem) findViewById(android.R.id.home);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
-
-        super.onOptionsItemSelected(mMenuItem);
-
-        //Intent prevIntent = new Intent(.getContext(),MapsActivity.class);
-        //startActivityForResult(myIntent,0);
 
         mSubmit = (Button) findViewById(R.id.Submit);
         mSubmit.setOnClickListener(this);
@@ -112,13 +105,13 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
         mNext.setOnClickListener(this);
         mPrev = (Button) findViewById(R.id.prev);
         mPrev.setOnClickListener(this);
-        mTextview = (TextView) findViewById(R.id.distance);
         mDistance = (TextView) findViewById(R.id.distance);
         mAltitude = (TextView) findViewById(R.id.altitude);
 
         setMapSettings();
         calcLoop();
         setupShareEvents();
+        Toast.makeText(this, "Adjust your route by dragging icons", Toast.LENGTH_LONG).show();
 
         mGoogleMap.setOnMarkerDragListener(new OnMarkerDragListener() {
             @Override
@@ -171,30 +164,6 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
                 Intent myIntent = new Intent(v.getContext(), ChronoActivity.class);
                 startActivityForResult(myIntent, 0);
                 //add code here to save route
-                // This is just to turn the ArrayList into a string
-                Gson gson = new Gson();
-                // Here the ArrayList is turned into a string
-                String inputString = gson.toJson(coordArray);
-                // Make a new DataBase, only needs to be called once
-                SQLiteDatabase db = mDbHelper.getWritableDatabase();
-                // I think this creates a new object that makes a sql command for us
-                // Basically, make a new one of these when you want to add something to the DB
-                ContentValues values = new ContentValues();
-                // Here we specify which column to add to and what to add to it.
-                // NOTE: you can add to multiple columns at once, for example:
-                // values.put(ClassReaderContract.ClassEntry.COLUMN_CLASS, classText.getText().toString());
-                // values.put(ClassReaderContract.ClassEntry.COLUMN_UNITS, unitsText.getText().toString());
-                // values.put(ClassReaderContract.ClassEntry.COLUMN_STUDY_HOURS, hours.getText().toString());
-                 values.put(MapReaderContract.MapEntry.COLUMN_ROUTE, inputString);
-                // Once you are done adding the values, we insert a new row into the DB.
-                // I don't remember if the RowID is required but I was using in my last project so I kept it just in case.
-                long newRowId;
-                // You can just copy and paste this and it should work.
-                newRowId = db.insert(
-                        MapReaderContract.MapEntry.TABLE_NAME,
-                        null,
-                        values);
-
                 break;
             case R.id.next:
                 mGoogleMap.clear();
@@ -259,7 +228,8 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
                 startActivityForResult(myIntent, 0);
                 return true;
             case R.id.option1:
-                //TODO add what to do
+                Intent optionIntent = new Intent(ConfirmActivity.this, dbActivity.class);
+                startActivityForResult(optionIntent, 0);
                 return true;
 
             case R.id.option2:
@@ -354,17 +324,21 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
 
         mPolyline = this.mGoogleMap.addPolyline(rectLine);
 
+        Altitude = GetDirectionsAsyncTask.altitude;
+
         if (MapsActivity.kiloIsLength) {
             meters = GetDirectionsAsyncTask.distance;
             kilometers = (double) meters / 1000;
-            mTextview.setText("Distance: " + kilometers + " km");
+            mDistance.setText("Distance: " + kilometers + " km");
+            mAltitude.setText("Altitude: " + df.format(Altitude) + " m");
         } else {
             meters = GetDirectionsAsyncTask.distance;
             miles = (double) meters / 1600;
-            mTextview.setText("Distance: " + miles + " mi");
+            mDistance.setText("Distance: " + miles + " mi");
+            mAltitude.setText("Altitude: " + df.format(Altitude*3.28) + " ft");
         }
-        Altitude = GetDirectionsAsyncTask.altitude;
-        mAltitude.setText("Altitude: " + df.format(Altitude) + " m");
+
+
 
     }
 
@@ -509,40 +483,4 @@ public class ConfirmActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
     }
-
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-   /* public Action getIndexApiAction() {
-        Thing object = new Thing.Builder()
-                .setName("Confirm Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-                .build();
-        return new Action.Builder(Action.TYPE_VIEW)
-                .setObject(object)
-                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                .build();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
-        client.disconnect();
-    } */
 }

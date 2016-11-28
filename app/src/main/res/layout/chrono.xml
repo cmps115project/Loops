@@ -64,6 +64,15 @@
                 android:id="@+id/reset"
                 android:layout_weight="1"/>
 
+            <Button
+                android:text="Save"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/save"
+                android:background="@color/blue"
+                android:textColor="@color/white"
+                android:layout_weight="1"/>
+
         </LinearLayout>
 
         <Chronometer

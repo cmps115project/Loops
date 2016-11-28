@@ -37,6 +37,7 @@
         </activity>
         <activity android:name=".ConfirmActivity"></activity>
         <activity android:name=".ChronoActivity"></activity>
+        <activity android:name=".dbActivity"></activity>
 
         <activity
             android:name="com.apres.gerber.loops.ShareTextActivity"

@@ -18,6 +18,7 @@ public final class MapReaderContract {
         public static final String COLUMN_ROUTE = "ROUTE";
         public static final String COLUMN_DIST = "DISTANCE";
         public static final String COLUMN_ALT = "ALTITUDE";
+
     }
 
 }

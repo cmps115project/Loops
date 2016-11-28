@@ -16,8 +16,8 @@ public class MapDBHelper extends SQLiteOpenHelper {
                     MapReaderContract.MapEntry._ID + " INTEGER PRIMARY KEY," +
                     MapReaderContract.MapEntry.COLUMN_NAME_ENTRY_ID + TEXT_TYPE + COMMA_SEP +
                     MapReaderContract.MapEntry.COLUMN_ROUTE + TEXT_TYPE + COMMA_SEP +
-                    MapReaderContract.MapEntry.COLUMN_DIST + " TEXT_TYPE" + COMMA_SEP +
-                    MapReaderContract.MapEntry.COLUMN_ALT + " TEXT_TYPE" +
+                    MapReaderContract.MapEntry.COLUMN_DIST +  TEXT_TYPE + COMMA_SEP +
+                    MapReaderContract.MapEntry.COLUMN_ALT +  TEXT_TYPE +
                     " );";
 
     private static final String SQL_DELETE_ENTRIES =

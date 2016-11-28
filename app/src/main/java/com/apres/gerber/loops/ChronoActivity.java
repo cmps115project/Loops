@@ -1,6 +1,7 @@
 package com.apres.gerber.loops;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -27,6 +29,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
 
 import org.w3c.dom.Text;
 
@@ -46,26 +49,24 @@ public class ChronoActivity extends AppCompatActivity implements View.OnClickLis
     Button startButton;
     Button stopButton;
     Button resetButton;
+    Button saveButton;
     Chronometer mchrono;
     boolean startPress=false;
     boolean stopPress=false;
     long time =0;
     private TextView mDistance;
     private TextView mAltitude;
+    MapDBHelper mDbHelper = new MapDBHelper(this);
 
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
-
-        setContentView(chrono);
-
-        MapsActivity.mMenuItem = (MenuItem) findViewById(android.R.id.home);
+        setContentView(R.layout.chrono);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
-
-        super.onOptionsItemSelected(MapsActivity.mMenuItem);
 
         startButton = (Button) findViewById(R.id.start);
         startButton.setOnClickListener(this);
@@ -73,6 +74,8 @@ public class ChronoActivity extends AppCompatActivity implements View.OnClickLis
         stopButton.setOnClickListener(this);
         resetButton = (Button) findViewById(R.id.reset);
         resetButton.setOnClickListener(this);
+        saveButton = (Button) findViewById(R.id.save);
+        saveButton.setOnClickListener(this);
         mchrono = (Chronometer) findViewById(R.id.chronometer);
         mDistance = (TextView) findViewById(R.id.distance2);
         mAltitude = (TextView) findViewById(R.id.altitude2);
@@ -81,8 +84,14 @@ public class ChronoActivity extends AppCompatActivity implements View.OnClickLis
         provider = MapsActivity.provider;
         location = MapsActivity.location;
 
-        mDistance.setText("Distance: " + ConfirmActivity.miles + " mi");
-        mAltitude.setText("Altitude: " + ConfirmActivity.df.format(ConfirmActivity.Altitude) + " m");
+        if (MapsActivity.kiloIsLength) {
+            mDistance.setText("Distance: " + ConfirmActivity.kilometers + " km");
+            mAltitude.setText("Altitude: " + ConfirmActivity.df.format(ConfirmActivity.Altitude) + " m");
+        }
+        else{
+            mDistance.setText("Distance: " + ConfirmActivity.miles + " mi");
+            mAltitude.setText("Altitude: " + ConfirmActivity.df.format(ConfirmActivity.Altitude*3.28) + " ft");
+        }
         setMapSettings();
         ConfirmActivity.mPolyline = ConfirmActivity.mGoogleMap.addPolyline(ConfirmActivity.rectLine);
 
@@ -140,6 +149,26 @@ public class ChronoActivity extends AppCompatActivity implements View.OnClickLis
                 mchrono.setBase(SystemClock.elapsedRealtime());
                 mchrono.stop();
                 break;
+            case R.id.save:
+                Gson gson = new Gson();
+
+                String inputStringRoute = gson.toJson(ConfirmActivity.coordArray);
+                SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+                ContentValues values = new ContentValues();
+
+                values.put(MapReaderContract.MapEntry.COLUMN_ROUTE, inputStringRoute);
+
+                //values.put(MapReaderContract.MapEntry.COLUMN_DIST, mDistance.getText().toString());
+                // values.put(MapReaderContract.MapEntry.COLUMN_ALT, mAltitude.getText().toString());
+
+                long newRowId;
+                newRowId = db.insert(
+                        MapReaderContract.MapEntry.TABLE_NAME,
+                        null,
+                        values);
+                Toast.makeText(this, "Route Saved", Toast.LENGTH_LONG).show();
+                break;
         }
     }
 
@@ -168,16 +197,25 @@ public class ChronoActivity extends AppCompatActivity implements View.OnClickLis
             Toast.makeText(this, "No Location Found", Toast.LENGTH_LONG).show();
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent myIntent;
         switch (item.getItemId()) {
             case android.R.id.home:
                 Toast.makeText(this, "Home Button Pressed", Toast.LENGTH_LONG);
-                Intent myIntent = new Intent(ChronoActivity.this, ConfirmActivity.class);
+                myIntent = new Intent(ChronoActivity.this, ConfirmActivity.class);
                 startActivityForResult(myIntent,0);
                 return true;
             case R.id.option1:
-                //TODO add what to do
+                myIntent = new Intent(ChronoActivity.this, dbActivity.class);
+                startActivityForResult(myIntent,0);
                 return true;
 
             case R.id.option2:
