@@ -16,14 +16,14 @@ public class MapDBHelper extends SQLiteOpenHelper {
                     MapReaderContract.MapEntry._ID + " INTEGER PRIMARY KEY," +
                     MapReaderContract.MapEntry.COLUMN_NAME_ENTRY_ID + TEXT_TYPE + COMMA_SEP +
                     MapReaderContract.MapEntry.COLUMN_ROUTE + TEXT_TYPE + COMMA_SEP +
-                    MapReaderContract.MapEntry.COLUMN_DIST +  TEXT_TYPE + COMMA_SEP +
-                    MapReaderContract.MapEntry.COLUMN_ALT +  TEXT_TYPE +
+                    MapReaderContract.MapEntry.COLUMN_DISTANCE +  TEXT_TYPE + COMMA_SEP +
+                    MapReaderContract.MapEntry.COLUMN_ALTITUDE +  TEXT_TYPE +
                     " );";
 
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + MapReaderContract.MapEntry.TABLE_NAME;
 
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "MapTable.db";
 
     public MapDBHelper(Context context) {

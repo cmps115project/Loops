@@ -13,11 +13,11 @@ public final class MapReaderContract {
     public MapReaderContract() {}
 
     public static abstract class MapEntry implements BaseColumns {
-        public static final String TABLE_NAME = "CLASS_TABLE";
+        public static final String TABLE_NAME = "MAP_TABLE";
         public static final String COLUMN_NAME_ENTRY_ID = "entryid";
         public static final String COLUMN_ROUTE = "ROUTE";
-        public static final String COLUMN_DIST = "DISTANCE";
-        public static final String COLUMN_ALT = "ALTITUDE";
+        public static final String COLUMN_DISTANCE = "DISTANCE";
+        public static final String COLUMN_ALTITUDE = "ALTITUDE";
 
     }
 
